@@ -111,25 +111,33 @@ docker-compose up --build
 ```
 resume-analyzer/
 ├── backend/
+│   ├── __init__.py
 │   ├── app.py                  # Flask app entry point
 │   ├── requirements.txt
 │   ├── models/
+│   │   ├── __init__.py
 │   │   └── schemas.py          # MongoDB document schemas
 │   ├── routes/
+│   │   ├── __init__.py
 │   │   ├── resume_routes.py    # Resume API endpoints
 │   │   ├── auth_routes.py      # Auth API endpoints
 │   │   └── employer_routes.py  # Employer API endpoints
 │   └── utils/
+│       ├── __init__.py
 │       ├── nlp_engine.py       # spaCy NLP logic
 │       └── resume_parser.py    # PDF/DOCX parsing
 ├── frontend/
 │   ├── templates/
-│   │   ├── index.html
-│   │   ├── dashboard.html
-│   │   └── employer.html
+│   │   ├── index.html          # Landing + Login/Register
+│   │   ├── dashboard.html      # Candidate dashboard
+│   │   └── employer.html       # Employer search
 │   └── static/
 │       ├── css/
+│       │   ├── main.css        # Shared dark theme styles
+│       │   └── dashboard.css   # Dashboard-specific styles
 │       └── js/
+│           ├── api.js          # API client + session helpers
+│           └── dashboard.js    # Dashboard logic + skill tests
 ├── docker/
 │   └── mongo-init.js
 ├── postman/
@@ -137,6 +145,8 @@ resume-analyzer/
 ├── .github/
 │   └── workflows/
 │       └── ci-cd.yml
+├── .env                        # Never commit (in .gitignore)
+├── .gitignore
 ├── docker-compose.yml
 ├── Dockerfile
 └── README.md
