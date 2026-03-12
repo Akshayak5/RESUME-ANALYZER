@@ -1,4 +1,4 @@
-## RESUME-ANLYZER
+## 🧠RESUME-ANLYZER
 
 The AI Resume Analyzer is a web-based application that analyzes resumes using Natural Language Processing (NLP) techniques to extract important information such as candidate details, skills, and experience. The system evaluates the extracted data and generates a resume score based on industry-relevant skill requirements.
 
@@ -9,7 +9,7 @@ The platform includes a skill verification feature, allowing candidates to valid
 Furthermore, the system provides an employer search module that enables recruiters to filter and find potential candidates based on specific skills and resume scores. Overall, the AI Resume Analyzer helps streamline resume evaluation, assists candidates in improving their resumes, and supports recruiters in efficiently identifying suitable talent.
 
 
-## Features
+## ✨Features
 
 	•	Resume Upload & Parsing
         Upload resumes in multiple formats such as PDF, DOCX, DOC, and TXT. The system automatically extracts relevant information from the uploaded resume.
@@ -39,7 +39,7 @@ Furthermore, the system provides an employer search module that enables recruite
         Stores previously analyzed resumes so users can view and compare their past analysis results.
 
 
-## Tech Stack
+## 🛠️Tech Stack
 
 Frontend
 
@@ -72,3 +72,132 @@ DevOps & Deployment
 	•	Docker Compose
 	•	Gunicorn
 
+
+## 🚀Getting Started
+
+### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+- Git
+ 
+### 1. Clone the repository
+```bash
+git clone https://github.com/YOUR_USERNAME/resume-analyzer.git
+cd resume-analyzer
+```
+ 
+### 2. Set up environment variables
+Create a `.env` file in the root directory:
+```env
+MONGO_URI=mongodb://mongo:27017/resumeiq
+SECRET_KEY=your-secret-key-here
+FLASK_DEBUG=0
+```
+ 
+### 3. Build and run with Docker
+```bash
+docker-compose up --build
+```
+ 
+### 4. Access the app
+| Service | URL |
+|---|---|
+| Frontend | http://localhost:5000 |
+| Mongo Express | http://localhost:8081 |
+ 
+---
+ 
+## 📁 Project Structure
+ 
+```
+resume-analyzer/
+├── backend/
+│   ├── app.py                  # Flask app entry point
+│   ├── requirements.txt
+│   ├── models/
+│   │   └── schemas.py          # MongoDB document schemas
+│   ├── routes/
+│   │   ├── resume_routes.py    # Resume API endpoints
+│   │   ├── auth_routes.py      # Auth API endpoints
+│   │   └── employer_routes.py  # Employer API endpoints
+│   └── utils/
+│       ├── nlp_engine.py       # spaCy NLP logic
+│       └── resume_parser.py    # PDF/DOCX parsing
+├── frontend/
+│   ├── templates/
+│   │   ├── index.html
+│   │   ├── dashboard.html
+│   │   └── employer.html
+│   └── static/
+│       ├── css/
+│       └── js/
+├── docker/
+│   └── mongo-init.js
+├── postman/
+│   └── ResumeIQ_API.postman_collection.json
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+├── docker-compose.yml
+├── Dockerfile
+└── README.md
+```
+ 
+---
+ 
+## 📡 API Endpoints
+ 
+### Auth
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Login and get user info |
+| GET | `/api/auth/profile/:uid` | Get user profile |
+ 
+### Resume
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/resume/analyze` | Upload and analyze a resume |
+| GET | `/api/resume/:id` | Get a specific resume |
+| GET | `/api/resume/history?user_id=` | Get resume history for a user |
+| POST | `/api/resume/verify-skill` | Submit a skill verification test |
+| GET | `/api/resume/skills/trending` | Get trending skills across all resumes |
+ 
+### Employer
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/employer/candidates` | Browse all candidates |
+ 
+---
+ 
+## 🧪 Testing the API
+ 
+Import the Postman collection from `postman/ResumeIQ_API.postman_collection.json` to test all endpoints.
+ 
+---
+ 
+## 🔄 CI/CD
+ 
+This project uses **GitHub Actions** for automated build and deployment. The workflow is defined in `.github/workflows/ci-cd.yml`.
+ 
+---
+ 
+## 🤝 Contributing
+ 
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+ 
+---
+ 
+## 📄 License
+ 
+This project is licensed under the MIT License.
+ 
+---
+ 
+## 👨‍💻 Author
+ 
+Built with ❤️ by **Akshaya**
+ 
