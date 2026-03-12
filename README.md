@@ -43,7 +43,7 @@ Furthermore, the system provides an employer search module that enables recruite
 
 Frontend
 
-	•	React.js
+
 	•	HTML5
 	•	CSS3
 	•	JavaScript
