@@ -44,8 +44,8 @@ Furthermore, the system provides an employer search module that enables recruite
 Frontend
 
 	•	React.js
-	•	HTML
-	•	CSS
+	•	HTML5
+	•	CSS3
 	•	JavaScript
 
 Backend
