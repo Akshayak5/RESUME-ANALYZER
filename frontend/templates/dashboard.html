@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard — ResumeIQ</title>
+<link rel="stylesheet" href="/static/css/main.css">
+<link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-brand">Resume<span class="accent">IQ</span><span class="live-dot" style="margin-left:8px"></span></div>
+  <div class="navbar-nav">
+    <button class="btn btn-ghost btn-sm" onclick="window.location.href='/employer'" id="empBtn" style="display:none">Employer View</button>
+    <div class="user-chip">
+      <div class="user-avatar" id="userAvatar">A</div>
+      <span id="userName">User</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="logout()">Sign Out</button>
+  </div>
+</nav>
+
+<div class="dash-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-section="upload" onclick="showSection('upload')">
+        <span>📄</span> Upload Resume
+      </button>
+      <button class="nav-item" data-section="analysis" onclick="showSection('analysis')">
+        <span>🤖</span> Analysis
+        <span class="nav-badge" id="analysisBadge" style="display:none">NEW</span>
+      </button>
+      <button class="nav-item" data-section="crud" onclick="showSection('crud')">
+        <span>🗂️</span> Manage Resumes
+      </button>
+      <button class="nav-item" data-section="history" onclick="showSection('history')">
+        <span>📜</span> History
+      </button>
+      <button class="nav-item" data-section="trending" onclick="showSection('trending')">
+        <span>📈</span> Trending Skills
+      </button>
+      <!-- NEW -->
+      <button class="nav-item" data-section="roadmap" onclick="showSection('roadmap')">
+        <span>🗺️</span> Career Roadmap
+      </button>
+    </nav>
+
+    <div class="sidebar-stats" id="sideStats" style="display:none">
+      <div class="section-title">Quick Stats</div>
+      <div class="sstat"><span class="sstat-label">Score</span><span class="sstat-value" id="ssSc">—</span></div>
+      <div class="sstat"><span class="sstat-label">Skills</span><span class="sstat-value" id="ssSk">—</span></div>
+      <div class="sstat"><span class="sstat-label">Experience</span><span class="sstat-value" id="ssEx">—</span></div>
+    </div>
+  </aside>
+
+  <main class="dash-main">
+
+    <!-- ══ UPLOAD ══ -->
+    <section class="dash-section active" id="sec-upload">
+      <div class="section-header fade-up">
+        <h2>Analyze Your Resume</h2>
+        <p class="section-sub">Upload PDF, DOCX, DOC, or TXT — AI does the rest</p>
+      </div>
+
+      <div class="upload-card fade-up fade-up-1">
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <input type="file" id="fileInput" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="fileSelected(this)">
+          <div class="upload-icon">📄</div>
+          <div class="upload-title">Drop your resume here</div>
+          <div class="upload-sub">PDF · DOCX · DOC · TXT · Max 10MB</div>
+          <button class="btn btn-outline" style="margin-top:16px" type="button">Browse File</button>
+        </div>
+
+        <div class="file-preview" id="filePreview" style="display:none">
+          <div class="file-info">
+            <span class="file-icon">📎</span>
+            <div>
+              <div class="file-name" id="fileName">—</div>
+              <div class="file-size" id="fileSize">—</div>
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="clearFile()">✕ Remove</button>
+          </div>
+          <button class="btn btn-primary btn-lg" onclick="analyzeResume()" style="width:100%;margin-top:16px">
+            🤖 Analyze Resume
+          </button>
+        </div>
+
+        <div class="analyzing-state" id="analyzingState" style="display:none">
+          <div class="analyzing-steps">
+            <div class="step" id="step1">📄 Parsing document...</div>
+            <div class="step" id="step2">🔍 Extracting skills with NLP...</div>
+            <div class="step" id="step3">📊 Computing score...</div>
+            <div class="step" id="step4">💼 Matching job roles...</div>
+          </div>
+          <div class="progress" style="margin-top:20px">
+            <div class="progress-fill pf-accent" id="analyzeProgress" style="width:0%;transition:width .5s ease"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="how-it-works fade-up fade-up-2">
+        <div class="section-title">How it works</div>
+        <div class="steps-grid">
+          <div class="step-card"><div class="step-num">01</div><div class="step-title">Upload Resume</div><div class="step-desc">PDF, DOCX, DOC or TXT format</div></div>
+          <div class="step-card"><div class="step-num">02</div><div class="step-title">NLP Analysis</div><div class="step-desc">spaCy extracts skills and experience</div></div>
+          <div class="step-card"><div class="step-num">03</div><div class="step-title">Get Score</div><div class="step-desc">Scored 0–100 vs industry benchmarks</div></div>
+          <div class="step-card"><div class="step-num">04</div><div class="step-title">Verify Skills</div><div class="step-desc">Take tests and land the job</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ ANALYSIS ══ -->
+    <section class="dash-section" id="sec-analysis">
+      <div class="section-header">
+        <h2>Resume Analysis</h2>
+        <div id="resumeFilename" class="section-sub">—</div>
+      </div>
+
+      <div class="analysis-top">
+        <div class="card card-glow">
+          <div class="section-title">Resume Score</div>
+          <div style="display:flex;align-items:center;gap:24px">
+            <div class="score-circle">
+              <svg width="120" height="120" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="8"/>
+                <circle cx="60" cy="60" r="50" fill="none" stroke-width="8" stroke-linecap="round"
+                  id="scoreArc" stroke-dasharray="314" stroke-dashoffset="314"
+                  style="transition:stroke-dashoffset 1.2s ease"/>
+              </svg>
+              <div class="score-inner">
+                <div class="score-num" id="scoreNum">—</div>
+                <div class="score-sub">/ 100</div>
+              </div>
+            </div>
+            <div>
+              <div id="scoreLabel" style="font-family:var(--display);font-size:20px;font-weight:700">—</div>
+              <div id="scoreDesc" style="font-size:12px;color:var(--t2);margin-top:6px;max-width:180px;line-height:1.6">Upload a resume to see your score</div>
+              <div style="margin-top:12px" id="expBadge"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">Candidate Info</div>
+          <div class="info-grid">
+            <div class="info-row"><span class="info-key">Name</span><span class="info-val" id="cName">—</span></div>
+            <div class="info-row"><span class="info-key">Email</span><span class="info-val" id="cEmail">—</span></div>
+            <div class="info-row"><span class="info-key">Phone</span><span class="info-val" id="cPhone">—</span></div>
+            <div class="info-row"><span class="info-key">Experience</span><span class="info-val" id="cExp">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="analysis-row">
+        <div class="card">
+          <div class="section-title">Skills Detected <span id="skillCount" class="badge badge-accent">0</span></div>
+          <div class="skills-wrap" id="skillsFound"></div>
+          <div class="section-title" style="margin-top:20px">By Category</div>
+          <div id="categorized"></div>
+        </div>
+        <div class="card">
+          <div class="section-title">Missing Skills <span class="badge badge-red" id="missingCount">0</span></div>
+          <p style="font-size:12px;color:var(--t2);margin-bottom:14px">Add these to boost your score</p>
+          <div class="skills-wrap" id="skillsMissing"></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="section-title">Job Role Recommendations</div>
+        <div class="jobs-grid" id="jobsGrid"></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="section-title">Verify Your Skills</div>
+        <p style="font-size:12px;color:var(--t2);margin-bottom:14px">Take a short test to get a verified badge on your profile</p>
+        <div class="verify-grid" id="verifyGrid"></div>
+      </div>
+
+      <!-- ══ NEW: AI Resume Enhancer ══ -->
+      <div class="card enhance-card" id="enhanceCard">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div>
+            <div class="section-title" style="display:flex;align-items:center;gap:8px">
+              ✨ AI Resume Enhancer
+              <span class="badge badge-accent" style="font-size:10px;padding:3px 8px">Powered by Groq AI</span>
+            </div>
+            <p style="font-size:12px;color:var(--t2);margin-top:4px">Fix spelling, rephrase weak bullets, and get a professionally enhanced version of your resume</p>
+          </div>
+          <button class="btn btn-primary" id="enhanceBtn" onclick="enhanceResume()">
+            ✨ Enhance My Resume
+          </button>
+        </div>
+        <div id="enhanceResult" style="display:none;margin-top:24px"></div>
+      </div>
+    </section>
+
+    <!-- ══ CRUD ══ -->
+    <section class="dash-section" id="sec-crud">
+      <div class="section-header fade-up">
+        <h2>Manage Resumes</h2>
+        <p class="section-sub">Create · Read · Update · Delete your resume records</p>
+      </div>
+      <div id="crudContent">
+        <div style="display:flex;align-items:center;gap:12px;padding:40px;color:var(--t2)">
+          <div class="spinner"></div>&nbsp;Loading...
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ HISTORY ══ -->
+    <section class="dash-section" id="sec-history">
+      <div class="section-header">
+        <h2>Resume History</h2>
+        <p class="section-sub">Your previously analyzed resumes</p>
+      </div>
+      <div id="historyContent">
+        <div style="text-align:center;padding:60px;color:var(--t3)"><div class="spinner" style="margin:0 auto"></div></div>
+      </div>
+    </section>
+
+    <!-- ══ TRENDING ══ -->
+    <section class="dash-section" id="sec-trending">
+      <div class="section-header">
+        <h2>Trending Skills</h2>
+        <p class="section-sub">Most in-demand skills across all analyzed resumes</p>
+      </div>
+      <div id="trendingContent">
+        <div style="text-align:center;padding:60px;color:var(--t3)"><div class="spinner" style="margin:0 auto"></div></div>
+      </div>
+    </section>
+
+    <!-- ══ NEW: Career Roadmap ══ -->
+    <section class="dash-section" id="sec-roadmap">
+      <div class="section-header fade-up">
+        <h2>Career Roadmap</h2>
+        <p class="section-sub">Enter your dream job — AI maps the skills gap and builds your personal roadmap</p>
+      </div>
+
+      <div class="card roadmap-input-card fade-up fade-up-1">
+        <div class="section-title" style="margin-bottom:16px">🎯 What job are you targeting?</div>
+        <div class="roadmap-input-row">
+          <input type="text" class="form-input" id="jobInput"
+            placeholder="e.g. Machine Learning Engineer, Full Stack Developer, DevOps Engineer..."
+            onkeydown="if(event.key==='Enter')generateRoadmap()"
+            style="flex:1;font-size:14px">
+          <button class="btn btn-primary" id="roadmapBtn" onclick="generateRoadmap()" style="white-space:nowrap">
+            🗺️ Generate Roadmap
+          </button>
+        </div>
+        <div class="roadmap-suggestions">
+          <span style="font-size:11px;color:var(--t3)">Tech:</span>
+          <button class="sugg-chip" onclick="quickJob('Full Stack Developer')">Full Stack Dev</button>
+          <button class="sugg-chip" onclick="quickJob('Machine Learning Engineer')">ML Engineer</button>
+          <button class="sugg-chip" onclick="quickJob('DevOps Engineer')">DevOps</button>
+          <button class="sugg-chip" onclick="quickJob('Data Scientist')">Data Scientist</button>
+          <button class="sugg-chip" onclick="quickJob('Frontend Developer')">Frontend Dev</button>
+          <button class="sugg-chip" onclick="quickJob('Android Developer')">Android Dev</button>
+          <button class="sugg-chip" onclick="quickJob('Cybersecurity Analyst')">Cybersecurity</button>
+          <button class="sugg-chip" onclick="quickJob('Cloud Architect')">Cloud Architect</button>
+        </div>
+        <div class="roadmap-suggestions" style="margin-top:8px">
+          <span style="font-size:11px;color:var(--t3)">Healthcare:</span>
+          <button class="sugg-chip" onclick="quickJob('Doctor / Medical Officer')">Doctor</button>
+          <button class="sugg-chip" onclick="quickJob('Nurse')">Nurse</button>
+          <button class="sugg-chip" onclick="quickJob('Pharmacist')">Pharmacist</button>
+          <button class="sugg-chip" onclick="quickJob('Clinical Research Associate')">Clinical Research</button>
+          <button class="sugg-chip" onclick="quickJob('Healthcare Administrator')">Healthcare Admin</button>
+        </div>
+        <div class="roadmap-suggestions" style="margin-top:8px">
+          <span style="font-size:11px;color:var(--t3)">Business:</span>
+          <button class="sugg-chip" onclick="quickJob('HR Manager')">HR Manager</button>
+          <button class="sugg-chip" onclick="quickJob('Business Analyst')">Business Analyst</button>
+          <button class="sugg-chip" onclick="quickJob('Project Manager')">Project Manager</button>
+          <button class="sugg-chip" onclick="quickJob('Financial Analyst')">Finance</button>
+          <button class="sugg-chip" onclick="quickJob('Digital Marketing Manager')">Digital Marketing</button>
+          <button class="sugg-chip" onclick="quickJob('Sales Manager')">Sales</button>
+          <button class="sugg-chip" onclick="quickJob('Content Writer')">Content Writer</button>
+        </div>
+        <div class="roadmap-suggestions" style="margin-top:8px">
+          <span style="font-size:11px;color:var(--t3)">Engineering:</span>
+          <button class="sugg-chip" onclick="quickJob('Mechanical Engineer')">Mechanical Eng</button>
+          <button class="sugg-chip" onclick="quickJob('Civil Engineer')">Civil Eng</button>
+          <button class="sugg-chip" onclick="quickJob('Electrical Engineer')">Electrical Eng</button>
+          <button class="sugg-chip" onclick="quickJob('UI/UX Designer')">UI/UX Designer</button>
+          <button class="sugg-chip" onclick="quickJob('Data Analyst')">Data Analyst</button>
+        </div>
+      </div>
+
+      <div id="roadmapResult" style="display:none"></div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Skill Test Modal -->
+<div class="modal-overlay" id="testModal" style="display:none" onclick="if(event.target===this)closeTest()">
+  <div class="modal" style="max-width:560px;max-height:90vh;overflow-y:auto">
+    <button class="modal-close" onclick="closeTest()">✕</button>
+    <h3 style="font-family:var(--display);margin-bottom:4px" id="testTitle">Skill Test</h3>
+    <p style="font-size:12px;color:var(--t2);margin-bottom:24px" id="testSubtitle"></p>
+    <div id="testBody"></div>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script src="/static/js/dashboard.js"></script>
+</body>
+</html>

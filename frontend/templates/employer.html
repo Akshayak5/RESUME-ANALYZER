@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Employer — ResumeIQ</title>
+<link rel="stylesheet" href="/static/css/main.css">
+<style>
+.emp-layout{display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 61px)}
+/* Filters panel */
+.filters-panel{background:var(--bg2);border-right:1px solid var(--border);padding:24px;position:sticky;top:61px;height:calc(100vh - 61px);overflow-y:auto}
+.filter-title{font-family:var(--display);font-size:18px;font-weight:700;margin-bottom:24px}
+.filter-section{margin-bottom:24px}
+.filter-section-label{font-size:11px;color:var(--t2);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+/* Skill category groups */
+.skill-category-label{font-size:10px;color:var(--t3);letter-spacing:.08em;text-transform:uppercase;margin:10px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.skill-chip-select{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.skill-chip{padding:5px 12px;border-radius:6px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--t2);transition:all .2s}
+.skill-chip.active{background:var(--accent-dim);color:var(--accent);border-color:rgba(108,99,255,.3)}
+.skill-chip:hover{border-color:var(--border2);color:var(--t1)}
+.range-wrap{display:flex;align-items:center;gap:10px;font-size:12px}
+.range-input{flex:1;accent-color:var(--accent)}
+.range-val{color:var(--accent);min-width:40px;text-align:right}
+/* Field filter tabs */
+.field-tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
+.field-tab{padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--t3);transition:all .2s}
+.field-tab.active{background:var(--accent-dim);color:var(--accent);border-color:rgba(108,99,255,.3)}
+/* Main */
+.emp-main{padding:32px}
+.emp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+.emp-header h2{font-family:var(--display);font-size:26px;font-weight:800}
+.search-bar{display:flex;gap:10px;margin-bottom:24px}
+.search-input-wrap{flex:1;position:relative}
+.search-input-wrap .form-input{padding-left:36px}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--t3);pointer-events:none}
+.results-meta{font-size:13px;color:var(--t2);margin-bottom:16px}
+/* Candidate cards */
+.candidates-grid{display:flex;flex-direction:column;gap:14px}
+.candidate-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r2);padding:22px;cursor:pointer;transition:all .2s}
+.candidate-card:hover{border-color:var(--border2);box-shadow:0 0 24px rgba(108,99,255,.08)}
+.cand-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:14px}
+.cand-avatar{width:44px;height:44px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:18px;font-weight:800;color:#fff;flex-shrink:0}
+.cand-info{flex:1}
+.cand-name{font-family:var(--display);font-size:16px;font-weight:700}
+.cand-meta{font-size:12px;color:var(--t2);margin-top:3px}
+.cand-score-wrap{text-align:right}
+.cand-score{font-family:var(--display);font-size:28px;font-weight:800}
+.cand-score-lbl{font-size:11px;color:var(--t2)}
+.cand-skills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.cand-bottom{display:flex;align-items:center;justify-content:space-between}
+/* Detail modal */
+.cand-detail{max-width:640px}
+.detail-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.detail-avatar{width:56px;height:56px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:22px;font-weight:800;color:#fff}
+.detail-name{font-family:var(--display);font-size:22px;font-weight:800}
+.detail-email{font-size:13px;color:var(--t2);margin-top:4px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.detail-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.detail-stat-val{font-family:var(--display);font-size:22px;font-weight:700}
+.detail-stat-lbl{font-size:11px;color:var(--t2);margin-top:4px}
+/* Empty state */
+.empty-state{text-align:center;padding:80px 32px;color:var(--t3)}
+.empty-state .icon{font-size:48px;margin-bottom:16px}
+.empty-state p{font-size:14px}
+/* Bookmark button */
+.bookmark-btn{background:none;border:none;cursor:pointer;font-size:18px;padding:4px 8px;border-radius:var(--r);transition:all .2s;color:var(--t3)}
+.bookmark-btn:hover{background:var(--bg2);color:var(--yellow)}
+.bookmark-btn.saved{color:var(--yellow)}
+/* Shortlist bar */
+.shortlist-bar{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:12px 16px;margin-bottom:16px;display:none;align-items:center;justify-content:space-between;gap:12px}
+.shortlist-bar.visible{display:flex}
+@media(max-width:900px){
+.emp-layout{grid-template-columns:1fr}
+.filters-panel{display:none}
+}
+</style>
+</head>
+<body>
+<nav class="navbar">
+<div class="navbar-brand">Resume<span class="accent">IQ</span> <span class="live-dot"></span></div>
+<div class="navbar-nav">
+<span class="badge badge-accent">Employer</span>
+<div class="user-chip" style="display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:20px;font-size:13px">
+<div class="user-avatar" id="userAvatar" style="width:24px;height:24px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">E</div>
+<span id="userName">Employer</span>
+</div>
+<button class="btn btn-ghost btn-sm" onclick="session.clear();window.location.href='/'">Sign Out</button>
+</div>
+</nav>
+<div class="emp-layout">
+<!-- Filters -->
+<aside class="filters-panel">
+  <div class="filter-title">🔍 Filter Candidates</div>
+  <div class="filter-section">
+    <div class="filter-section-label">Min Resume Score</div>
+    <div class="range-wrap">
+      <span style="color:var(--t3);font-size:12px">0</span>
+      <input type="range" class="range-input" id="scoreFilter" min="0" max="100" value="0" oninput="updateScoreFilter(this.value)">
+      <span class="range-val" id="scoreFilterVal">0+</span>
+    </div>
+  </div>
+  <div class="filter-section">
+    <div class="filter-section-label">Min Experience (years)</div>
+    <div class="range-wrap">
+      <span style="color:var(--t3);font-size:12px">0</span>
+      <input type="range" class="range-input" id="expFilter" min="0" max="15" value="0" oninput="updateExpFilter(this.value)">
+      <span class="range-val" id="expFilterVal">0+</span>
+    </div>
+  </div>
+  <div class="filter-section">
+    <div class="filter-section-label">Required Skills</div>
+    <!-- Field selector tabs -->
+    <div class="field-tabs" id="fieldTabs">
+      <div class="field-tab active" onclick="setFieldFilter('all',this)">All</div>
+      <div class="field-tab" onclick="setFieldFilter('tech',this)">💻 Tech</div>
+      <div class="field-tab" onclick="setFieldFilter('health',this)">🏥 Health</div>
+      <div class="field-tab" onclick="setFieldFilter('business',this)">💼 Business</div>
+      <div class="field-tab" onclick="setFieldFilter('design',this)">🎨 Design</div>
+      <div class="field-tab" onclick="setFieldFilter('engineering',this)">⚙️ Engg</div>
+      <div class="field-tab" onclick="setFieldFilter('education',this)">📚 Edu</div>
+      <div class="field-tab" onclick="setFieldFilter('from_resumes',this)">📄 From Resumes</div>
+    </div>
+    <div class="skill-chip-select" id="skillChips"><!-- Populated by JS --></div>
+  </div>
+  <div class="filter-section">
+    <div class="filter-section-label">Verified Only</div>
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--t2)">
+      <input type="checkbox" id="verifiedOnly" onchange="applyFilters()" style="accent-color:var(--accent)">
+      Show verified candidates only
+    </label>
+  </div>
+  <button class="btn btn-primary" style="width:100%" onclick="applyFilters()">Apply Filters</button>
+  <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px" onclick="resetFilters()">Reset</button>
+</aside>
+<!-- Main -->
+<main class="emp-main">
+  <div class="emp-header fade-up">
+    <div>
+      <h2>Candidate Search</h2>
+      <p style="font-size:13px;color:var(--t2);margin-top:4px">Find and filter qualified candidates</p>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-ghost btn-sm" onclick="loadCandidates()">↻ Refresh</button>
+      <button class="btn btn-outline btn-sm" onclick="toggleShortlistView()" id="shortlistToggle">🔖 Shortlist (<span id="shortlistCount">0</span>)</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportCSV()">⬇️ Export CSV</button>
+      <button class="btn btn-ghost btn-sm" onclick="exportExcel()">📊 Export Excel</button>
+    </div>
+  </div>
+
+  <!-- Shortlist bar -->
+  <div class="shortlist-bar" id="shortlistBar">
+    <span style="font-size:13px;color:var(--t1)">🔖 Showing <strong id="shortlistBarCount">0</strong> shortlisted candidates</span>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm" onclick="exportCSV(true)">⬇️ Export Shortlist CSV</button>
+      <button class="btn btn-outline btn-sm" onclick="exportExcel(true)">📊 Export Shortlist Excel</button>
+      <button class="btn btn-ghost btn-sm" onclick="clearShortlist()">✕ Clear All</button>
+      <button class="btn btn-ghost btn-sm" onclick="showAllCandidates()">← Show All</button>
+    </div>
+  </div>
+
+  <div class="search-bar fade-up fade-up-1">
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="search-input-wrap" style="flex:1;min-width:1000px">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="form-input" id="searchInput" placeholder="Search by name, skill, email, or role..." onkeydown="if(event.key==='Enter')applyFilters()">
+      </div>
+      <button class="btn btn-primary" onclick="applyFilters()" style="white-space:nowrap">🔍 Search</button>
+    </div>
+  </div>
+  <div class="results-meta" id="resultsMeta">Loading candidates...</div>
+  <div class="candidates-grid" id="candidatesGrid">
+    <div class="empty-state"><div class="icon">⏳</div><p>Loading...</p></div>
+  </div>
+</main>
+</div>
+<!-- Candidate Detail Modal -->
+<div class="modal-overlay" id="detailModal" style="display:none" onclick="if(event.target===this)closeDetail()">
+  <div class="modal cand-detail" id="detailContent">
+    <button class="modal-close" onclick="closeDetail()">✕</button>
+    <div id="detailBody"></div>
+  </div>
+</div>
+<script src="/static/js/api.js"></script>
+<script>
+let allCandidates = [];
+let filtered = [];
+let selectedSkills = new Set();
+let shortlisted = new Set();
+let showingShortlist = false;
+let currentField = 'all';
+let resumeSkills = []; // skills discovered from uploaded resumes
+
+// ── Skill bank by field ────────────────────────────────────────────────────
+const SKILL_BANK = {
+  tech: [
+    'Python','JavaScript','TypeScript','Java','C++','C#','Go','Rust','PHP','Ruby','Swift','Kotlin','Scala',
+    'React','Vue','Angular','Node.js','Django','FastAPI','Spring Boot','Express',
+    'SQL','MongoDB','PostgreSQL','MySQL','Redis','Elasticsearch','Firebase',
+    'Docker','Kubernetes','AWS','Azure','GCP','Terraform','Ansible','CI/CD','Git',
+    'Machine Learning','Deep Learning','NLP','TensorFlow','PyTorch','Scikit-learn',
+    'REST API','GraphQL','Microservices','Linux','Bash'
+  ],
+  health: [
+    'Clinical Research','Patient Care','Medical Coding','ICD-10','CPT Coding','EMR/EHR','Epic','Cerner',
+    'Pharmacology','Anatomy','Physiology','Pathology','Medical Terminology','HIPAA','Healthcare Administration',
+    'Nursing','Radiology','Phlebotomy','Diagnostics','Surgery Assistance','Telemedicine',
+    'Public Health','Epidemiology','Biostatistics','Clinical Trials','FDA Regulations',
+    'Pharmacy','Drug Dispensing','Pediatrics','Geriatrics','Psychiatry','Nutrition',
+    'First Aid','BLS/CPR','Medical Writing','Lab Techniques','PCR','ELISA'
+  ],
+  business: [
+    'Project Management','Agile','Scrum','PMP','JIRA','Confluence',
+    'HR Management','Recruitment','Talent Acquisition','Onboarding','Payroll','SHRM',
+    'Business Analysis','Requirements Gathering','Process Improvement','Lean','Six Sigma',
+    'Financial Analysis','Accounting','Budgeting','Forecasting','Excel','SAP','QuickBooks',
+    'Digital Marketing','SEO','SEM','Google Ads','Social Media','Content Marketing','CRM',
+    'Sales','B2B','Negotiation','Client Relations','Salesforce',
+    'Supply Chain','Logistics','Procurement','Inventory Management',
+    'Legal','Contract Management','Compliance','Risk Management'
+  ],
+  design: [
+    'UI Design','UX Design','Figma','Adobe XD','Sketch','InVision','Wireframing','Prototyping',
+    'Photoshop','Illustrator','InDesign','After Effects','Premiere Pro',
+    'Graphic Design','Branding','Typography','Color Theory','Motion Graphics',
+    'User Research','Usability Testing','A/B Testing','Design Systems',
+    '3D Modeling','Blender','AutoCAD','SolidWorks','Revit','SketchUp',
+    'Video Editing','Animation','Photography','Print Design'
+  ],
+  engineering: [
+    'Mechanical Engineering','Civil Engineering','Electrical Engineering','Structural Engineering',
+    'AutoCAD','SolidWorks','MATLAB','ANSYS','CATIA','Revit','BIM',
+    'Circuit Design','PCB Layout','Embedded Systems','PLC Programming','SCADA',
+    'Thermodynamics','Fluid Mechanics','Finite Element Analysis','CAD/CAM',
+    'Construction Management','Site Supervision','Quality Control','NDT',
+    'HVAC','Plumbing Design','Geotechnical','Environmental Engineering',
+    'Robotics','Automation','IoT','Sensor Integration','Control Systems'
+  ],
+  education: [
+    'Curriculum Development','Lesson Planning','Classroom Management','Student Assessment',
+    'E-Learning','LMS','Instructional Design','Training & Development','SCORM',
+    'Special Education','Child Development','Early Childhood Education',
+    'Higher Education','Academic Research','Grant Writing','STEM Teaching',
+    'English Teaching','ESL','TESOL','Multilingual Education',
+    'Counseling','Career Guidance','Educational Psychology','Tutoring',
+    'Online Teaching','Zoom','Google Classroom','Canvas','Blackboard'
+  ]
+};
+
+function getAllSkills() {
+  return [...new Set(Object.values(SKILL_BANK).flat())];
+}
+
+function getFieldSkills(field) {
+  if (field === 'all') return getAllSkills();
+  if (field === 'from_resumes') return resumeSkills;
+  return SKILL_BANK[field] || [];
+}
+
+function setFieldFilter(field, el) {
+  currentField = field;
+  document.querySelectorAll('.field-tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderSkillChips(getFieldSkills(field));
+}
+
+function renderSkillChips(skills) {
+  const chips = document.getElementById('skillChips');
+  chips.innerHTML = '';
+  if (!skills.length) {
+    chips.innerHTML = '<span style="font-size:12px;color:var(--t3)">No skills found from uploaded resumes yet.</span>';
+    return;
+  }
+  skills.forEach(s => {
+    const el = document.createElement('div');
+    el.className = 'skill-chip' + (selectedSkills.has(s) ? ' active' : '');
+    el.textContent = s;
+    el.onclick = () => toggleSkill(s, el);
+    chips.appendChild(el);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const u = session.require('employer');
+  if (!u) return;
+  document.getElementById('userName').textContent = u.name;
+  document.getElementById('userAvatar').textContent = u.name[0].toUpperCase();
+  renderSkillChips(getAllSkills());
+  loadCandidates();
+});
+
+async function loadCandidates() {
+  try {
+    const data = await api.candidates();
+    // Deduplicate: keep only the latest resume per candidate email
+    const seen = new Map();
+    for (const c of (data.candidates || [])) {
+      const key = c.candidate?.email || c._id;
+      if (!seen.has(key)) {
+        seen.set(key, c);
+      } else {
+        const existing = seen.get(key);
+        if ((c.score || 0) > (existing.score || 0)) seen.set(key, c);
+      }
+    }
+    allCandidates = [...seen.values()];
+    filtered = [...allCandidates];
+
+    // Build resume-discovered skills
+    const discovered = new Set();
+    allCandidates.forEach(c => {
+      (c.skills || c.analysis?.skills || []).forEach(s => discovered.add(s));
+    });
+    resumeSkills = [...discovered].sort();
+
+    renderCandidates(filtered);
+  } catch(err) {
+    document.getElementById('candidatesGrid').innerHTML = `
+      <div class="empty-state"><div class="icon">📭</div><p>${err.message}</p></div>`;
+    document.getElementById('resultsMeta').textContent = 'Error loading candidates';
+  }
+}
+
+function renderCandidates(list) {
+  const grid = document.getElementById('candidatesGrid');
+  document.getElementById('resultsMeta').textContent = `${list.length} candidate${list.length !== 1 ? 's' : ''} found`;
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty-state"><div class="icon">🔍</div><p>No candidates match your filters.</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(c => {
+    const score = c.score || c.analysis?.score || 0;
+    const color = scoreColor(score);
+    const skills = c.skills || c.analysis?.skills || [];
+    const verified = c.analysis?.verified_skills || c.verified_skills || [];
+    const name = c.candidate?.name || c.user?.name || 'Candidate';
+    const email = c.candidate?.email || c.user?.email || '—';
+    const exp = c.experience_years || c.analysis?.experience_years || 0;
+    const isSaved = shortlisted.has(c._id);
+    return `<div class="candidate-card" onclick="showDetail('${c._id}')">
+      <div class="cand-top">
+        <div class="cand-avatar">${name[0]?.toUpperCase() || 'C'}</div>
+        <div class="cand-info">
+          <div class="cand-name">${name}</div>
+          <div class="cand-meta">${email} · ${exp} yrs experience</div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:8px">
+          <button class="bookmark-btn ${isSaved ? 'saved' : ''}"
+            onclick="event.stopPropagation();toggleShortlist('${c._id}')"
+            title="${isSaved ? 'Remove from shortlist' : 'Add to shortlist'}">🔖</button>
+          <div class="cand-score-wrap">
+            <div class="cand-score" style="color:${color}">${score}</div>
+            <div class="cand-score-lbl">${scoreLabel(score)}</div>
+          </div>
+        </div>
+      </div>
+      <div class="cand-skills">
+        ${skills.slice(0,6).map(s => {
+          const isV = verified.includes(s);
+          return `<span class="skill-tag ${isV ? 'verified' : ''}" style="font-size:11px">${isV?'✓ ':''}${s}</span>`;
+        }).join('')}
+        ${skills.length > 6 ? `<span class="badge badge-muted">+${skills.length-6} more</span>` : ''}
+      </div>
+      <div class="cand-bottom">
+        <div style="display:flex;gap:6px">
+          ${verified.length ? `<span class="badge badge-green">✓ ${verified.length} verified</span>` : ''}
+          <span class="badge badge-muted">${c.filename || 'Resume'}</span>
+          ${isSaved ? '<span class="badge badge-accent">🔖 Shortlisted</span>' : ''}
+        </div>
+        <span style="font-size:12px;color:var(--t3)">${new Date(c.uploaded_at).toLocaleDateString()}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function showDetail(id) {
+  const c = allCandidates.find(x => x._id === id);
+  if (!c) return;
+  const score = c.score || c.analysis?.score || 0;
+  const color = scoreColor(score);
+  const name = c.candidate?.name || 'Candidate';
+  const skills = c.skills || c.analysis?.skills || [];
+  const jobs = c.recommended_jobs || c.analysis?.recommended_jobs || [];
+  const verified = c.verified_skills || c.analysis?.verified_skills || [];
+  document.getElementById('detailBody').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-avatar">${name[0]?.toUpperCase()}</div>
+      <div>
+        <div class="detail-name">${name}</div>
+        <div class="detail-email">${c.candidate?.email || '—'} · ${c.candidate?.phone || '—'}</div>
+      </div>
+    </div>
+    <div class="detail-grid">
+      <div class="detail-stat">
+        <div class="detail-stat-val" style="color:${color}">${score}</div>
+        <div class="detail-stat-lbl">Resume Score</div>
+      </div>
+      <div class="detail-stat">
+        <div class="detail-stat-val">${c.analysis?.experience_years || 0}</div>
+        <div class="detail-stat-lbl">Years Experience</div>
+      </div>
+      <div class="detail-stat">
+        <div class="detail-stat-val">${skills.length}</div>
+        <div class="detail-stat-lbl">Skills Found</div>
+      </div>
+      <div class="detail-stat">
+        <div class="detail-stat-val" style="color:var(--green)">${verified.length}</div>
+        <div class="detail-stat-lbl">Verified Skills</div>
+      </div>
+    </div>
+    <div class="section-title">Skills</div>
+    <div class="skills-wrap" style="margin-bottom:16px">
+      ${skills.map(s => `<span class="skill-tag ${verified.includes(s)?'verified':''}">${verified.includes(s)?'✓ ':''}${s}</span>`).join('')}
+    </div>
+    ${jobs.length ? `
+    <div class="section-title">Recommended Roles</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+      ${jobs.map(j => `<span class="badge badge-accent">${j.title || j}</span>`).join('')}
+    </div>` : ''}
+    <div style="display:flex;gap:10px;margin-top:24px">
+      <button class="btn btn-primary" onclick="closeDetail()">Close</button>
+      ${c.candidate?.email ? `<a href="mailto:${c.candidate.email}" class="btn btn-outline">📧 Contact</a>` : ''}
+    </div>`;
+  document.getElementById('detailModal').style.display = 'flex';
+}
+
+function closeDetail() { document.getElementById('detailModal').style.display = 'none'; }
+
+function toggleSkill(skill, el) {
+  if (selectedSkills.has(skill)) { selectedSkills.delete(skill); el.classList.remove('active'); }
+  else { selectedSkills.add(skill); el.classList.add('active'); }
+}
+
+function updateScoreFilter(v) { document.getElementById('scoreFilterVal').textContent = v + '+'; }
+function updateExpFilter(v) { document.getElementById('expFilterVal').textContent = v + '+'; }
+
+function applyFilters() {
+  const minScore = parseInt(document.getElementById('scoreFilter').value);
+  const minExp = parseInt(document.getElementById('expFilter').value);
+  const verifiedOnly = document.getElementById('verifiedOnly').checked;
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  filtered = allCandidates.filter(c => {
+    const score = c.score || c.analysis?.score || 0;
+    const exp = c.experience_years || c.analysis?.experience_years || 0;
+    const skills = c.skills || c.analysis?.skills || [];
+    const name = (c.candidate?.name || '').toLowerCase();
+    const email = (c.candidate?.email || '').toLowerCase();
+    const verified = c.analysis?.verified_skills || c.verified_skills || [];
+    if (score < minScore) return false;
+    if (exp < minExp) return false;
+    if (verifiedOnly && !verified.length) return false;
+    if (selectedSkills.size && ![...selectedSkills].every(s => skills.includes(s))) return false;
+    if (search && !name.includes(search) && !email.includes(search) && !skills.some(s => s.toLowerCase().includes(search))) return false;
+    return true;
+  });
+  renderCandidates(filtered);
+}
+
+function resetFilters() {
+  document.getElementById('scoreFilter').value = 0;
+  document.getElementById('expFilter').value = 0;
+  document.getElementById('scoreFilterVal').textContent = '0+';
+  document.getElementById('expFilterVal').textContent = '0+';
+  document.getElementById('verifiedOnly').checked = false;
+  document.getElementById('searchInput').value = '';
+  selectedSkills.clear();
+  currentField = 'all';
+  document.querySelectorAll('.field-tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  renderSkillChips(getAllSkills());
+  filtered = [...allCandidates];
+  renderCandidates(filtered);
+}
+
+// ── Shortlist ─────────────────────────────────────────────────────────────
+function toggleShortlist(id) {
+  if (shortlisted.has(id)) { shortlisted.delete(id); showToast('Removed from shortlist', 'info'); }
+  else { shortlisted.add(id); showToast('Added to shortlist 🔖', 'success'); }
+  updateShortlistUI();
+  if (showingShortlist) renderCandidates(allCandidates.filter(c => shortlisted.has(c._id)));
+  else renderCandidates(filtered);
+}
+
+function updateShortlistUI() {
+  const count = shortlisted.size;
+  document.getElementById('shortlistCount').textContent = count;
+  document.getElementById('shortlistBarCount').textContent = count;
+  document.getElementById('shortlistToggle').style.color = count > 0 ? 'var(--yellow)' : '';
+}
+
+function toggleShortlistView() {
+  if (showingShortlist) { showAllCandidates(); return; }
+  showingShortlist = true;
+  const sl = allCandidates.filter(c => shortlisted.has(c._id));
+  if (!sl.length) { showToast('No candidates shortlisted yet. Click 🔖 to shortlist.', 'info'); showingShortlist = false; return; }
+  document.getElementById('shortlistBar').classList.add('visible');
+  renderCandidates(sl);
+  document.getElementById('resultsMeta').textContent = `${sl.length} shortlisted candidate${sl.length !== 1 ? 's' : ''}`;
+}
+
+function showAllCandidates() {
+  showingShortlist = false;
+  document.getElementById('shortlistBar').classList.remove('visible');
+  renderCandidates(filtered);
+}
+
+function clearShortlist() {
+  shortlisted.clear();
+  updateShortlistUI();
+  showAllCandidates();
+  showToast('Shortlist cleared', 'info');
+}
+
+// ── Export CSV ────────────────────────────────────────────────────────────
+function exportCSV(shortlistOnly = false) {
+  const list = shortlistOnly ? allCandidates.filter(c => shortlisted.has(c._id)) : filtered;
+  if (!list.length) { showToast('No candidates to export', 'error'); return; }
+  const headers = ['Name','Email','Phone','Score','Experience (yrs)','Skills','Verified Skills','Date'];
+  const rows = list.map(c => {
+    const escape = v => `"${String(v).replace(/"/g,'""')}"`;
+    return [
+      c.candidate?.name || '—', c.candidate?.email || '—', c.candidate?.phone || '—',
+      c.score || 0, c.experience_years || 0,
+      (c.skills || []).join('; '), (c.verified_skills || []).join('; '),
+      c.uploaded_at ? new Date(c.uploaded_at).toLocaleDateString() : '—',
+    ].map(escape).join(',');
+  });
+  const csv = [headers.join(','), ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = shortlistOnly ? 'shortlisted_candidates.csv' : 'all_candidates.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`Exported ${list.length} candidates as CSV ✓`, 'success');
+}
+
+// ── Export Excel ──────────────────────────────────────────────────────────
+function exportExcel(shortlistOnly = false) {
+  const list = shortlistOnly ? allCandidates.filter(c => shortlisted.has(c._id)) : filtered;
+  if (!list.length) { showToast('No candidates to export', 'error'); return; }
+  const headers = ['Name','Email','Phone','Score','Experience (yrs)','Skills','Verified Skills','Date'];
+  const esc = v => String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const rows = list.map(c => [
+    c.candidate?.name || '—', c.candidate?.email || '—', c.candidate?.phone || '—',
+    c.score || 0, c.experience_years || 0,
+    (c.skills || []).join(', '), (c.verified_skills || []).join(', '),
+    c.uploaded_at ? new Date(c.uploaded_at).toLocaleDateString() : '—',
+  ].map(v => `<td>${esc(String(v))}</td>`).join(''));
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+    xmlns:x="urn:schemas-microsoft-com:office:excel">
+    <head><meta charset="UTF-8"></head>
+    <body><table>
+      <tr>${headers.map(h=>`<th style="background:#1f3964;color:white;font-weight:bold">${h}</th>`).join('')}</tr>
+      ${rows.map(r=>`<tr>${r}</tr>`).join('')}
+    </table></body></html>`;
+  const blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = shortlistOnly ? 'shortlisted_candidates.xls' : 'all_candidates.xls';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(`Exported ${list.length} candidates as Excel ✓`, 'success');
+}
+</script>
+</body>
+</html>
