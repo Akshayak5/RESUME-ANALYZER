@@ -1,12 +1,18 @@
 ## 🧠RESUME-ANLYZER
 
-The AI Resume Analyzer is a web-based application that analyzes resumes using Natural Language Processing (NLP) techniques to extract important information such as candidate details, skills, and experience. The system evaluates the extracted data and generates a resume score based on industry-relevant skill requirements.
+The AI Resume Analyzer is a web-based application designed to automate and enhance the process of resume evaluation using Natural Language Processing (NLP) and AI techniques. The system allows users to upload resumes in multiple formats such as PDF, DOCX, DOC, and TXT, and extracts essential information including candidate details, skills, and experience.
 
-The application also identifies missing skills and provides suggestions to help candidates improve their profiles. Additionally, it recommends suitable job roles by matching the candidate’s skill set with common industry roles and displaying a match percentage.
+The application analyzes the extracted data to generate a resume score based on industry-relevant parameters such as skill diversity, demand, and completeness. It identifies missing or in-demand skills and provides actionable suggestions to help candidates improve their resumes and increase their employability.
 
-The platform includes a skill verification feature, allowing candidates to validate their abilities through short tests. Verified skills are highlighted, making it easier for recruiters to identify qualified candidates.
+In addition, the system offers job role recommendations by matching candidate skills with industry roles and calculating a match percentage. A unique skill verification module enables users to validate their abilities through short tests, with verified skills highlighted to improve credibility.
 
-Furthermore, the system provides an employer search module that enables recruiters to filter and find potential candidates based on specific skills and resume scores. Overall, the AI Resume Analyzer helps streamline resume evaluation, assists candidates in improving their resumes, and supports recruiters in efficiently identifying suitable talent.
+The platform also includes advanced features such as resume history tracking, trending skills analysis, and a career roadmap generator, which provides insights into required skills, learning paths, estimated time to achieve job readiness, and expected salary ranges.
+
+An AI Resume Enhancer, powered by advanced AI models, improves resume quality by correcting errors, refining content, and generating stronger bullet points. Users can download the enhanced resume for further use.
+
+For recruiters, the system provides an employer search module that enables efficient candidate filtering based on skills, scores, and experience, along with options to shortlist and export candidate data.
+
+Overall, the AI Resume Analyzer streamlines resume screening, assists candidates in building stronger profiles, and helps recruiters identify suitable talent efficiently, making it a comprehensive solution for modern recruitment and career development.
 
 
 ## ✨Features
