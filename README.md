@@ -169,7 +169,44 @@ resume-analyzer/
  
 ---
  
-## 📖 Usage
+## 📡 API Endpoints
+ 
+### Auth
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Login and get user info |
+| GET | `/api/auth/profile/:uid` | Get user profile |
+ 
+### Resume
+| Method | Endpoint | Description |
+|---|---|---|
+| POST | `/api/resume/analyze` | Upload and analyze a resume |
+| GET | `/api/resume/:id` | Get a specific resume |
+| GET | `/api/resume/history?user_id=` | Get resume history for a user |
+| POST | `/api/resume/verify-skill` | Submit a skill verification test |
+| GET | `/api/resume/skills/trending` | Get trending skills across all resumes |
+ 
+### Employer
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/employer/candidates` | Browse all candidates |
+ 
+---
+ 
+## 🧪 Testing the API
+ 
+Import the Postman collection from `postman/ResumeIQ_API.postman_collection.json` to test all endpoints.
+ 
+---
+ 
+## 🔄 CI/CD
+ 
+This project uses **GitHub Actions** for automated build and deployment. The workflow is defined in `.github/workflows/ci-cd.yml`.
+ 
+---
+ 
+ ## 📖 Usage
 
 ### For Candidates
 1. Register/Login at `http://localhost:5000`
@@ -186,15 +223,9 @@ resume-analyzer/
 2. Search candidates by skill, score, or experience
 3. Filter and shortlist candidates
 4. Export candidate data
- 
+
 ---
- 
-## 🔄 CI/CD
- 
-This project uses **GitHub Actions** for automated build and deployment. The workflow is defined in `.github/workflows/ci-cd.yml`.
- 
----
- 
+
 ## 🤝 Contributing
  
 1. Fork the repository
