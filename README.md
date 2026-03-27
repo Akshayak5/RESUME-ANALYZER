@@ -1,6 +1,6 @@
-## 🧠RESUME-ANLYZER
+## 💡RESUMEIQ(RESUME-ANALYZER)
 
-The AI Resume Analyzer is a web-based application designed to automate and enhance the process of resume evaluation using Natural Language Processing (NLP) and AI techniques. The system allows users to upload resumes in multiple formats such as PDF, DOCX, DOC, and TXT, and extracts essential information including candidate details, skills, and experience.
+ResumeIQ is a web-based application designed to automate and enhance the process of resume evaluation using Natural Language Processing (NLP) and AI techniques. The system allows users to upload resumes in multiple formats such as PDF, DOCX, DOC, and TXT, and extracts essential information including candidate details, skills, and experience.
 
 The application analyzes the extracted data to generate a resume score based on industry-relevant parameters such as skill diversity, demand, and completeness. It identifies missing or in-demand skills and provides actionable suggestions to help candidates improve their resumes and increase their employability.
 
