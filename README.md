@@ -38,7 +38,13 @@ Furthermore, the system provides an employer search module that enables recruite
 	•	Resume History Tracking
         Stores previously analyzed resumes so users can view and compare their past analysis results.
 
+	•	Career Roadmap
+        Allows candidates to enter a target job role and receive an AI-generated roadmap showing current match percentage, skills already acquired, skills to learn, estimated time to         job-readiness, and expected salary range — with role suggestions across Tech, Healthcare, Business, and Engineering domains.
+		
+    •	AI Resume Enhancer
+        Powered by Groq AI, it fixes spelling errors, rephrases weak bullet points, removes weak phrases, and provides improvement tips. Displays a fully enhanced resume that can be          copied or downloaded as a DOCX file.
 
+		
 ## 🛠️Tech Stack
 
 Frontend
@@ -110,10 +116,17 @@ docker-compose up --build
  
 ```
 resume-analyzer/
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+├── .vscode/
+│   ├── launch.json
+│   └── settings.json
 ├── backend/
 │   ├── __init__.py
 │   ├── app.py                  # Flask app entry point
 │   ├── requirements.txt
+│   ├── .env
 │   ├── models/
 │   │   ├── __init__.py
 │   │   └── schemas.py          # MongoDB document schemas
@@ -123,33 +136,29 @@ resume-analyzer/
 │   │   ├── auth_routes.py      # Auth API endpoints
 │   │   └── employer_routes.py  # Employer API endpoints
 │   └── utils/
-│       ├── __init__.py
-│       ├── nlp_engine.py       # spaCy NLP logic
-│       └── resume_parser.py    # PDF/DOCX parsing
-├── frontend/
-│   ├── templates/
-│   │   ├── index.html          # Landing + Login/Register
-│   │   ├── dashboard.html      # Candidate dashboard
-│   │   └── employer.html       # Employer search
-│   └── static/
-│       ├── css/
-│       │   ├── main.css        # Shared dark theme styles
-│       │   └── dashboard.css   # Dashboard-specific styles
-│       └── js/
-│           ├── api.js          # API client + session helpers
-│           └── dashboard.js    # Dashboard logic + skill tests
+│       ├── nlp_engine.py
+│       └── resume_parser.py
 ├── docker/
 │   └── mongo-init.js
-├── postman/
-│   └── ResumeIQ_API.postman_collection.json
-├── .github/
-│   └── workflows/
-│       └── ci-cd.yml
-├── .env                        # Never commit (in .gitignore)
+├── frontend/
+│   ├── static/
+│   │   ├── css/
+│   │   │   ├── dashboard.css
+│   │   │   └── main.css
+│   │   └── js/
+│   │       ├── api.js
+│   │       └── dashboard.js
+│   └── templates/
+│       ├── dashboard.html
+│       ├── employer.html
+│       ├── index.html
+│       └── reset-password.html
+├── .env
 ├── .gitignore
 ├── docker-compose.yml
 ├── Dockerfile
-└── README.md
+├── README.md
+└── requirements.txt
 ```
  
 ---
