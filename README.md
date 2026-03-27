@@ -39,10 +39,10 @@ Furthermore, the system provides an employer search module that enables recruite
         Stores previously analyzed resumes so users can view and compare their past analysis results.
 
 	•	Career Roadmap
-        Allows candidates to enter a target job role and receive an AI-generated roadmap showing current match percentage, skills already acquired, skills to learn, estimated time to         job-readiness, and expected salary range — with role suggestions across Tech, Healthcare, Business, and Engineering domains.
+        Allows candidates to enter a target job role and receive an AI-generated roadmap showing current match percentage, skills already acquired, skills to learn, estimated time to job-readiness, and expected salary range — with role suggestions across Tech, Healthcare, Business, and Engineering domains.
 		
     •	AI Resume Enhancer
-        Powered by Groq AI, it fixes spelling errors, rephrases weak bullet points, removes weak phrases, and provides improvement tips. Displays a fully enhanced resume that can be          copied or downloaded as a DOCX file.
+        Powered by Groq AI, it fixes spelling errors, rephrases weak bullet points, removes weak phrases, and provides improvement tips. Displays a fully enhanced resume that can be copied or downloaded as a DOCX file.
 
 		
 ## 🛠️Tech Stack
