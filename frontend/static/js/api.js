@@ -44,6 +44,7 @@ const api = {
   history:   (userId) => api.request('GET', `/api/resume/history?user_id=${encodeURIComponent(String(userId || ''))}`),
   trending:  () => api.request('GET', '/api/resume/skills/trending'),
   verifySkill: (payload) => api.request('POST', '/api/resume/verify-skill', payload),
+  generateQuiz: (skill) => api.request('POST', '/api/resume/generate-questions', { skill }),
   deleteResume: (id) => api.request('DELETE', `/api/resume/${encodeURIComponent(id)}`),
   updateResume: (id, data) => api.request('PATCH', `/api/resume/${encodeURIComponent(id)}`, data),
 

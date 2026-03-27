@@ -725,16 +725,23 @@ async function startTest(skill, resumeId) {
   document.getElementById('testModal').style.display = 'flex';
 
   try {
-    const res = await fetch('/api/quiz/generate', {
+    const res = await fetch('/api/resume/generate-questions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...authHeaders() },
       body: JSON.stringify({ skill, count: 5 }),
     });
-
+    
     if (!res.ok) throw new Error('Generation failed');
-    const data      = await res.json();
-    const questions = data.questions;
-    const source    = data.source || 'groq';
+    const data = await res.json();
+    
+    // Map Groq format { correct: "A" } → { ans: 0 }
+    const letterToIndex = { A: 0, B: 1, C: 2, D: 3 };
+    const questions = (data.questions || []).map(q => ({
+      q:    q.question,
+      opts: q.options.map(o => o.replace(/^[A-D]\.\s*/, '')),
+      ans:  letterToIndex[q.correct] ?? 0,
+    }));
+    const source = 'groq';
 
     testState = { skill, resumeId, questions, answers: new Array(questions.length).fill(-1), current: 0 };
     document.getElementById('testSubtitle').textContent =
