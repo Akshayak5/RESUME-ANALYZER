@@ -414,7 +414,7 @@ function renderAnalysis(data) {
         No testable technical skills found. Add technical skills to your resume to unlock verification.
       </div>`;
   } else {
-    testableSkills.slice(0, 8).forEach(skill => {
+    testableSkills.forEach(skill => {
       const v         = verifiedSkills.includes(skill);
       const safeSkill = skill.replace(/'/g, "\\'");
       verifyEl.innerHTML += `
