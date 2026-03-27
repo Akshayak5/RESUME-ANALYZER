@@ -216,12 +216,6 @@ This project uses **GitHub Actions** for automated build and deployment. The wor
  
 ---
  
-## 📄 License
- 
-This project is licensed under the MIT License.
- 
----
- 
 ## 👨‍💻 Author
  
 Built with ❤️ by **Akshaya**
