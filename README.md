@@ -1,4 +1,4 @@
-## 💡RESUMEIQ (RESUME-ANALYZER)
+## 💡ResumeIQ (RESUME-ANALYZER)
 
 ResumeIQ is a web-based application designed to automate and enhance the process of resume evaluation using Natural Language Processing (NLP) and AI techniques. The system allows users to upload resumes in multiple formats such as PDF, DOCX, DOC, and TXT, and extracts essential information including candidate details, skills, and experience.
 
