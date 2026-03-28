@@ -24,6 +24,14 @@
 .field-tabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px}
 .field-tab{padding:4px 10px;border-radius:20px;font-size:11px;cursor:pointer;border:1px solid var(--border);background:var(--bg3);color:var(--t3);transition:all .2s}
 .field-tab.active{background:var(--accent-dim);color:var(--accent);border-color:rgba(108,99,255,.3)}
+/* Separator between field tabs and skill chips */
+.skill-separator{
+  width:100%;
+  height:1px;
+  background:var(--border);
+  margin:4px 0 12px 0;
+  border:none;
+}
 /* Main */
 .emp-main{padding:32px}
 .emp-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
@@ -48,7 +56,7 @@
 .cand-skills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
 .cand-bottom{display:flex;align-items:center;justify-content:space-between}
 /* Detail modal */
-.cand-detail{max-width:640px; max-height:85vh; overflow-y:auto;}
+.cand-detail{max-width:640px;max-height:85vh;overflow-y:auto;}
 .detail-header{display:flex;align-items:center;gap:16px;margin-bottom:24px}
 .detail-avatar{width:56px;height:56px;border-radius:12px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:22px;font-weight:800;color:#fff}
 .detail-name{font-family:var(--display);font-size:22px;font-weight:800}
@@ -119,6 +127,8 @@
       <div class="field-tab" onclick="setFieldFilter('education',this)">📚 Edu</div>
       <div class="field-tab" onclick="setFieldFilter('from_resumes',this)">📄 From Resumes</div>
     </div>
+    <!-- Separator between field tabs and skill chips -->
+    <hr class="skill-separator">
     <div class="skill-chip-select" id="skillChips"><!-- Populated by JS --></div>
   </div>
   <div class="filter-section">
@@ -187,7 +197,7 @@ let selectedSkills = new Set();
 let shortlisted = new Set();
 let showingShortlist = false;
 let currentField = 'all';
-let resumeSkills = []; // skills discovered from uploaded resumes
+let resumeSkills = [];
 
 // ── Skill bank by field ────────────────────────────────────────────────────
 const SKILL_BANK = {
@@ -290,7 +300,6 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadCandidates() {
   try {
     const data = await api.candidates();
-    // Deduplicate: keep only the latest resume per candidate email
     const seen = new Map();
     for (const c of (data.candidates || [])) {
       const key = c.candidate?.email || c._id;
@@ -304,7 +313,6 @@ async function loadCandidates() {
     allCandidates = [...seen.values()];
     filtered = [...allCandidates];
 
-    // Build resume-discovered skills
     const discovered = new Set();
     allCandidates.forEach(c => {
       (c.skills || c.analysis?.skills || []).forEach(s => discovered.add(s));

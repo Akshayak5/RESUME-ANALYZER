@@ -2,9 +2,13 @@ from flask import Blueprint, request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from bson import ObjectId
 import traceback
+import re
 from datetime import datetime
 
 auth_bp = Blueprint("auth", __name__)
+
+# Strong password regex: min 8 chars, at least one letter, one number, one special char
+STRONG_PWD = re.compile(r'^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*#?&]).{8,}$')
 
 
 def get_db():
@@ -25,8 +29,12 @@ def register():
 
         if not name or not email or not password:
             return jsonify({"error": "Name, email and password are required"}), 400
-        if len(password) < 6:
-            return jsonify({"error": "Password must be at least 6 characters"}), 400
+
+        if not STRONG_PWD.match(password):
+            return jsonify({
+                "error": "Password must be at least 8 characters with a letter, number, and special character (@$!%*#?&)"
+            }), 400
+
         if role not in ("candidate", "employer"):
             return jsonify({"error": "Role must be candidate or employer"}), 400
 
@@ -107,8 +115,11 @@ def reset_password():
 
         if not email or not new_password:
             return jsonify({"error": "Email and new password are required"}), 400
-        if len(new_password) < 6:
-            return jsonify({"error": "Password must be at least 6 characters"}), 400
+
+        if not STRONG_PWD.match(new_password):
+            return jsonify({
+                "error": "Password must be at least 8 characters with a letter, number, and special character (@$!%*#?&)"
+            }), 400
 
         db   = get_db()
         user = db.users.find_one({"email": email})

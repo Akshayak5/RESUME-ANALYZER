@@ -79,6 +79,13 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
 .auth-footer{margin-top:20px;text-align:center;font-size:12px;color:var(--t3)}
 .auth-footer a{color:var(--accent)}
 
+/* Password strength */
+.pwd-strength{margin-top:6px;font-size:11px;min-height:16px;transition:all .2s}
+.pwd-rules{margin-top:6px;font-size:11px;color:var(--t3);line-height:1.8}
+.pwd-rules .rule{display:flex;align-items:center;gap:5px}
+.pwd-rules .rule.ok{color:var(--green)}
+.pwd-rules .rule.fail{color:var(--t3)}
+
 /* Floating code decoration */
 .code-deco{
   position:absolute;bottom:-40px;left:-60px;
@@ -116,7 +123,7 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
       <span class="line2">Get Hired Faster.</span>
     </h1>
     <p class="hero-desc">
-      Upload your resume and instantly get skill extraction, scoring, gap analysis, 
+      Upload your resume and instantly get skill extraction, scoring, gap analysis,
       job recommendations, and skill verification — all in one platform.
     </p>
 
@@ -193,11 +200,15 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
       </div>
       <div class="form-group">
         <label class="form-label">New Password</label>
-        <input type="password" class="form-input" id="forgotNewPass" placeholder="Min 6 characters" minlength="6" required>
+        <input type="password" class="form-input" id="forgotNewPass"
+          placeholder="Min 8 chars with number & special char" minlength="8" required
+          oninput="checkResetStrength(this.value)">
+        <div class="pwd-strength" id="resetStrength"></div>
       </div>
       <div class="form-group">
         <label class="form-label">Confirm New Password</label>
-        <input type="password" class="form-input" id="forgotConfirmPass" placeholder="Repeat new password" minlength="6" required>
+        <input type="password" class="form-input" id="forgotConfirmPass"
+          placeholder="Repeat new password" minlength="8" required>
       </div>
       <button class="btn btn-primary btn-lg" style="width:100%" id="resetBtn" onclick="handleResetPassword()">
         Reset Password
@@ -219,7 +230,16 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
       </div>
       <div class="form-group">
         <label class="form-label">Password</label>
-        <input type="password" class="form-input" id="regPassword" placeholder="Min 6 characters" required minlength="6">
+        <input type="password" class="form-input" id="regPassword"
+          placeholder="Min 8 chars with number & special char"
+          required minlength="8" oninput="checkRegStrength(this.value)">
+        <div class="pwd-strength" id="regStrength"></div>
+        <div class="pwd-rules" id="regRules">
+          <div class="rule fail" id="rule-len">✗ At least 8 characters</div>
+          <div class="rule fail" id="rule-alpha">✗ At least one letter</div>
+          <div class="rule fail" id="rule-num">✗ At least one number</div>
+          <div class="rule fail" id="rule-special">✗ At least one special character (@$!%*#?&)</div>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">I am a</label>
@@ -245,6 +265,73 @@ body{display:flex;align-items:center;justify-content:center;min-height:100vh;pad
 const u = session.get();
 if (u) window.location.href = u.role === 'employer' ? '/employer' : '/dashboard';
 
+// ── Password validation regex ─────────────────────────────────────────────────
+const STRONG_PWD = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*#?&]).{8,}$/;
+
+// ── Register password strength checker ───────────────────────────────────────
+function checkRegStrength(val) {
+  const el      = document.getElementById('regStrength');
+  const ruleLen     = document.getElementById('rule-len');
+  const ruleAlpha   = document.getElementById('rule-alpha');
+  const ruleNum     = document.getElementById('rule-num');
+  const ruleSpecial = document.getElementById('rule-special');
+
+  if (!val) {
+    el.textContent = '';
+    [ruleLen, ruleAlpha, ruleNum, ruleSpecial].forEach(r => {
+      r.classList.remove('ok'); r.classList.add('fail');
+    });
+    ruleLen.textContent     = '✗ At least 8 characters';
+    ruleAlpha.textContent   = '✗ At least one letter';
+    ruleNum.textContent     = '✗ At least one number';
+    ruleSpecial.textContent = '✗ At least one special character (@$!%*#?&)';
+    return;
+  }
+
+  const hasLen     = val.length >= 8;
+  const hasAlpha   = /[a-zA-Z]/.test(val);
+  const hasNum     = /\d/.test(val);
+  const hasSpecial = /[@$!%*#?&]/.test(val);
+
+  setRule(ruleLen,     hasLen,     '8 characters',                    'At least 8 characters');
+  setRule(ruleAlpha,   hasAlpha,   'Letter included',                 'At least one letter');
+  setRule(ruleNum,     hasNum,     'Number included',                 'At least one number');
+  setRule(ruleSpecial, hasSpecial, 'Special character included',      'At least one special character (@$!%*#?&)');
+
+  const score = [hasLen, hasAlpha, hasNum, hasSpecial].filter(Boolean).length;
+  if (score === 4) {
+    el.textContent = '✅ Strong password';
+    el.style.color = 'var(--green)';
+  } else if (score === 3) {
+    el.textContent = '⚠️ Medium — complete all rules below';
+    el.style.color = 'var(--yellow)';
+  } else {
+    el.textContent = '❌ Weak password';
+    el.style.color = 'var(--red)';
+  }
+}
+
+function setRule(el, ok, okText, failText) {
+  if (ok) {
+    el.textContent = '✓ ' + okText;
+    el.classList.add('ok'); el.classList.remove('fail');
+  } else {
+    el.textContent = '✗ ' + failText;
+    el.classList.add('fail'); el.classList.remove('ok');
+  }
+}
+
+// ── Reset password strength checker ──────────────────────────────────────────
+function checkResetStrength(val) {
+  const el = document.getElementById('resetStrength');
+  if (!val) { el.textContent = ''; return; }
+  const score = [val.length >= 8, /[a-zA-Z]/.test(val), /\d/.test(val), /[@$!%*#?&]/.test(val)].filter(Boolean).length;
+  if (score === 4) { el.textContent = '✅ Strong password'; el.style.color = 'var(--green)'; }
+  else if (score === 3) { el.textContent = '⚠️ Medium — add more complexity'; el.style.color = 'var(--yellow)'; }
+  else { el.textContent = '❌ Weak — min 8 chars with letter, number & special char'; el.style.color = 'var(--red)'; }
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
 function switchTab(tab) {
   document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (tab==='login'?0:1)===i));
   document.getElementById('loginForm').classList.toggle('active', tab==='login');
@@ -257,6 +344,7 @@ function selectRole(role, el) {
   document.getElementById('regRole').value = role;
 }
 
+// ── Login ─────────────────────────────────────────────────────────────────────
 async function handleLogin(e) {
   e.preventDefault();
   const btn = document.getElementById('loginBtn');
@@ -277,6 +365,7 @@ async function handleLogin(e) {
   }
 }
 
+// ── Forgot Password ───────────────────────────────────────────────────────────
 function showForgotPassword() {
   document.getElementById('loginForm').classList.remove('active');
   document.getElementById('forgotForm').classList.add('active');
@@ -290,13 +379,16 @@ function showLoginForm() {
 }
 
 async function handleResetPassword() {
-  const email    = document.getElementById('forgotEmail').value.trim();
-  const newPass  = document.getElementById('forgotNewPass').value;
-  const confirm  = document.getElementById('forgotConfirmPass').value;
-  const btn      = document.getElementById('resetBtn');
+  const email   = document.getElementById('forgotEmail').value.trim();
+  const newPass = document.getElementById('forgotNewPass').value;
+  const confirm = document.getElementById('forgotConfirmPass').value;
+  const btn     = document.getElementById('resetBtn');
 
   if (!email) { showToast('Please enter your email', 'error'); return; }
-  if (newPass.length < 6) { showToast('Password must be at least 6 characters', 'error'); return; }
+  if (!STRONG_PWD.test(newPass)) {
+    showToast('Password must be at least 8 characters with a letter, number, and special character (@$!%*#?&)', 'error');
+    return;
+  }
   if (newPass !== confirm) { showToast('Passwords do not match', 'error'); return; }
 
   btn.disabled = true;
@@ -315,6 +407,7 @@ async function handleResetPassword() {
       document.getElementById('forgotEmail').value = '';
       document.getElementById('forgotNewPass').value = '';
       document.getElementById('forgotConfirmPass').value = '';
+      document.getElementById('resetStrength').textContent = '';
       showLoginForm();
     }, 1200);
   } catch(err) {
@@ -325,8 +418,16 @@ async function handleResetPassword() {
   }
 }
 
+// ── Register ──────────────────────────────────────────────────────────────────
 async function handleRegister(e) {
   e.preventDefault();
+
+  const password = document.getElementById('regPassword').value;
+  if (!STRONG_PWD.test(password)) {
+    showToast('Password must be at least 8 characters with a letter, number, and special character (@$!%*#?&)', 'error');
+    return;
+  }
+
   const btn = document.getElementById('registerBtn');
   btn.innerHTML = '<div class="spinner"></div> Creating account...';
   btn.disabled = true;
@@ -334,7 +435,7 @@ async function handleRegister(e) {
     const data = await api.register(
       document.getElementById('regName').value,
       document.getElementById('regEmail').value,
-      document.getElementById('regPassword').value,
+      password,
       document.getElementById('regRole').value
     );
     session.set(data);
