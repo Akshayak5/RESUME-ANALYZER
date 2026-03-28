@@ -4,7 +4,7 @@ ResumeIQ is a web-based application designed to automate and enhance the process
 
 The application analyzes the extracted data to generate a resume score based on industry-relevant parameters such as skill diversity, demand, and completeness. It identifies missing or in-demand skills and provides actionable suggestions to help candidates improve their resumes and increase their employability.
 
-In addition, the system offers job role recommendations by matching candidate skills with industry roles and calculating a match percentage. A unique skill verification module enables users to validate their abilities through short tests, with verified skills highlighted to improve credibility.
+In addition, the system offers job role recommendations by matching candidate skills with industry roles and calculating a match percentage. A unique skill verification module enables users to validate their technical abilities through AI-generated skill tests powered by Groq AI, with verified skills highlighted on their profile to improve credibility and visibility to recruiters.
 
 The platform also includes advanced features such as resume history tracking, trending skills analysis, and a career roadmap generator, which provides insights into required skills, learning paths, estimated time to achieve job readiness, and expected salary ranges.
 
@@ -33,7 +33,8 @@ Overall, the AI Resume Analyzer streamlines resume screening, assists candidates
         Suggests suitable job roles based on the candidate’s skills and experience, along with a match percentage.
 		
 	•	Skill Verification Tests
-        Allows candidates to take short skill-based tests to validate their abilities and display verified skills in their profile.
+        Allows candidates to take AI-generated skill tests, powered by Groq AI, to validate their technical abilities and display verified skill badges on their profile.
+
 		
 	•	Employer Candidate Search
         Enables recruiters to search and filter candidates based on skills, resume scores, or verified abilities.

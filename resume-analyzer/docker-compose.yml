@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  # MongoDB
+  mongo:
+    image: mongo:7.0
+    container_name: resumeai_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: resume_analyzer_db
+    networks:
+      - resumeai_net
+
+  # Flask Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: resumeai_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      FLASK_ENV: production
+      MONGODB_URI: mongodb://mongo:27017/
+      DB_NAME: resume_analyzer_db
+      JWT_SECRET_KEY: change-this-in-production
+    depends_on:
+      - mongo
+    networks:
+      - resumeai_net
+    volumes:
+      - uploads_data:/app/uploads
+
+  # Frontend (served via nginx)
+  frontend:
+    image: nginx:alpine
+    container_name: resumeai_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - resumeai_net
+
+volumes:
+  mongo_data:
+  uploads_data:
+
+networks:
+  resumeai_net:
+    driver: bridge

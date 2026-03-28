@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — ResumeAI</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="page-wrap">
+    <nav class="navbar">
+      <a href="../index.html" class="nav-brand" style="text-decoration:none;color:inherit">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-name">ResumeAI</span>
+      </a>
+      <div class="nav-links">
+        <a href="register.html" class="btn-primary">Create Account</a>
+      </div>
+    </nav>
+
+    <div class="page-center">
+      <div style="width:100%;max-width:420px">
+        <div style="text-align:center;margin-bottom:32px">
+          <h1 style="font-size:28px;font-weight:800;letter-spacing:-1px">Welcome back</h1>
+          <p style="color:var(--text2);margin-top:8px;font-size:14px">Login to your ResumeAI account</p>
+        </div>
+
+        <div class="card">
+          <div class="form-group">
+            <label class="form-label">Email address</label>
+            <input id="email" type="email" class="form-input" placeholder="you@email.com" autocomplete="email"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password</label>
+            <input id="password" type="password" class="form-input" placeholder="••••••••" autocomplete="current-password"/>
+          </div>
+
+          <button id="loginBtn" class="btn-primary btn-full" style="margin-top:8px">
+            Sign In
+          </button>
+
+          <div id="errorMsg" class="error-msg" style="display:none"></div>
+        </div>
+
+        <p style="text-align:center;margin-top:20px;font-size:14px;color:var(--text3)">
+          Don't have an account? <a href="register.html" class="link-secondary">Sign up free</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    if (Auth.isLoggedIn()) window.location.href = "dashboard.html";
+
+    document.getElementById("loginBtn").addEventListener("click", async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const btn = document.getElementById("loginBtn");
+      const errEl = document.getElementById("errorMsg");
+
+      if (!email || !password) {
+        errEl.textContent = "Please enter email and password";
+        errEl.style.display = "block";
+        return;
+      }
+
+      btn.innerHTML = '<span class="spinner"></span> Signing in...';
+      btn.disabled = true;
+      errEl.style.display = "none";
+
+      const res = await api("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password })
+      });
+
+      btn.innerHTML = "Sign In";
+      btn.disabled = false;
+
+      if (res?.ok) {
+        Auth.setToken(res.data.token);
+        Auth.setUser(res.data.user);
+        window.location.href = "dashboard.html";
+      } else {
+        errEl.textContent = res?.data?.error || "Login failed. Try again.";
+        errEl.style.display = "block";
+      }
+    });
+
+    // Enter key support
+    document.addEventListener("keydown", e => {
+      if (e.key === "Enter") document.getElementById("loginBtn").click();
+    });
+  </script>
+</body>
+</html>

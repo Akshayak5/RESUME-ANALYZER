@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ResumeAI — Smart Resume Analyzer</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <span class="brand-icon">⚡</span>
+      <span class="brand-name">ResumeAI</span>
+    </div>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="pages/login.html" class="btn-outline">Login</a>
+      <a href="pages/register.html" class="btn-primary">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="badge">AI-Powered • NLP • Skill Verification</div>
+      <h1>Analyze Your Resume<br><span class="gradient-text">with Intelligence</span></h1>
+      <p class="hero-sub">Upload your resume and get instant insights — skill extraction, resume score, job recommendations, and verified skill badges.</p>
+      <div class="hero-cta">
+        <a href="pages/register.html" class="btn-primary btn-lg">Start Free Analysis →</a>
+        <a href="pages/login.html" class="btn-ghost btn-lg">Already have an account</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">50+</span><span class="stat-label">Skills Detected</span></div>
+        <div class="stat"><span class="stat-num">10+</span><span class="stat-label">Job Roles Matched</span></div>
+        <div class="stat"><span class="stat-num">8+</span><span class="stat-label">Skill Quizzes</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <h2>Everything You Need</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📄</div>
+        <h3>Resume Parsing</h3>
+        <p>Upload PDF, DOCX, or TXT. Our NLP engine extracts text and analyzes it instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧠</div>
+        <h3>Skill Extraction</h3>
+        <p>Detects 50+ technical and soft skills using spaCy NLP and keyword matching.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Resume Score</h3>
+        <p>Get a 0–100 score with breakdown across Skills, Experience, Education, and Formatting.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <h3>Job Recommendations</h3>
+        <p>Discover job roles that best match your skill set with percentage match scores.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✅</div>
+        <h3>Skill Verification</h3>
+        <p>Prove your knowledge with short quizzes. Earn verified badges on your skills.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Progress Tracking</h3>
+        <p>Track score improvements across multiple resume versions over time.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2024 ResumeAI · Built with Flask, MongoDB & spaCy</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

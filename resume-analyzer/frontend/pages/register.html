@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register — ResumeAI</title>
+  <link rel="stylesheet" href="../css/main.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="page-wrap">
+    <nav class="navbar">
+      <a href="../index.html" class="nav-brand" style="text-decoration:none;color:inherit">
+        <span class="brand-icon">⚡</span><span class="brand-name">ResumeAI</span>
+      </a>
+      <div class="nav-links">
+        <a href="login.html" class="btn-outline">Login</a>
+      </div>
+    </nav>
+
+    <div class="page-center">
+      <div style="width:100%;max-width:440px">
+        <div style="text-align:center;margin-bottom:32px">
+          <h1 style="font-size:28px;font-weight:800;letter-spacing:-1px">Create your account</h1>
+          <p style="color:var(--text2);margin-top:8px;font-size:14px">Start analyzing resumes for free</p>
+        </div>
+
+        <div class="card">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input id="name" type="text" class="form-input" placeholder="John Doe"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email address</label>
+            <input id="email" type="email" class="form-input" placeholder="you@email.com"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Password <span style="color:var(--text3);font-size:11px">(min 6 characters)</span></label>
+            <input id="password" type="password" class="form-input" placeholder="••••••••"/>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm Password</label>
+            <input id="confirm" type="password" class="form-input" placeholder="••••••••"/>
+          </div>
+
+          <button id="registerBtn" class="btn-primary btn-full" style="margin-top:8px">
+            Create Account →
+          </button>
+          <div id="errorMsg" class="error-msg" style="display:none"></div>
+        </div>
+
+        <p style="text-align:center;margin-top:20px;font-size:14px;color:var(--text3)">
+          Already have an account? <a href="login.html" class="link-secondary">Sign in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    if (Auth.isLoggedIn()) window.location.href = "dashboard.html";
+
+    document.getElementById("registerBtn").addEventListener("click", async () => {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirm = document.getElementById("confirm").value;
+      const btn = document.getElementById("registerBtn");
+      const errEl = document.getElementById("errorMsg");
+
+      errEl.style.display = "none";
+      if (!name || !email || !password) { errEl.textContent = "All fields are required"; errEl.style.display = "block"; return; }
+      if (password.length < 6) { errEl.textContent = "Password must be at least 6 characters"; errEl.style.display = "block"; return; }
+      if (password !== confirm) { errEl.textContent = "Passwords do not match"; errEl.style.display = "block"; return; }
+
+      btn.innerHTML = '<span class="spinner"></span> Creating account...';
+      btn.disabled = true;
+
+      const res = await api("/auth/register", {
+        method: "POST",
+        body: JSON.stringify({ name, email, password })
+      });
+
+      btn.innerHTML = "Create Account →";
+      btn.disabled = false;
+
+      if (res?.ok) {
+        Auth.setToken(res.data.token);
+        Auth.setUser(res.data.user);
+        window.location.href = "dashboard.html";
+      } else {
+        errEl.textContent = res?.data?.error || "Registration failed. Try again.";
+        errEl.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
